@@ -1,0 +1,181 @@
+<div class="alert alert-danger" role="alert" *ngIf="errorMessage != null">
+  {{ errorMessage }}
+</div>
+
+<h4
+  style="
+    text-align: right;
+    background-color: rgb(0, 98, 255);
+    color: white;
+    width: fit-content;
+    float: right;
+    border-radius: 0px 0px 0px 12px;
+  "
+  class="p-4 shadow"
+>
+  {{ currentUsername }}
+</h4>
+<div class="container py-6">
+  <div class="row">
+    <div class="col-3 p-2">
+      <!-- users list -->
+      <h2 class="my-4">Users</h2>
+      <div
+        class="list-group p-1"
+        *ngFor="let user of users; let i = index"
+        (click)="selectUser(i, user.userName)"
+      >
+        <div
+          class="row list-group-item d-flex p-1 shadow-sm border-0"
+          style="height: 82px; max-height: 82px; min-height: 82px"
+          [class.active]="isUserActive(i)"
+        >
+          <img
+            src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-{{
+              i + 6
+            }}.webp"
+            alt="avatar"
+            class="rounded-circle p-1 align-self-center"
+            width="60"
+          />
+          <div class="p-2">
+            <p class="fw-bold mb-0">{{ user.userName }}</p>
+            <p
+              class="small text-muted"
+              *ngIf="user.userName == currentUsername"
+            >
+              <em>Siz</em>
+            </p>
+          </div>
+          <!--Message Notification Count -->
+          <div
+            class="p-2"
+            *ngFor="let notification of messageNotifications; let i = index"
+          >
+            <span
+              *ngIf="user.id == notification.senderId"
+              class="badge badge-danger"
+              [class.d-none]="notification.unReadedMessage == 0"
+            >
+              {{ notification.unReadedMessage }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-9 p-2">
+      <h2 class="my-4">Chat</h2>
+      <!-- Messages -->
+      <div class="d-flex bd-highlight">
+        <div
+          class="mr-auto bd-highlight form-check"
+          style="margin-left: 42px; margin-top: 8px"
+          [class.d-none]="!isCheckBoxesActive"
+        >
+          <input
+            class="form-check-input"
+            type="checkbox"
+            value=""
+            id="selectAll"
+            [(ngModel)]="isAllMessagesSelected"
+            (click)="selectAllMessages()"
+          />
+          <label class="form-check-label" for="selectAll">Select All</label>
+        </div>
+
+        <div class="d-flex bd-highlight ml-auto">
+          <button
+            type="button"
+            [class.d-none]="!isCheckBoxesActive"
+            (click)="deleteMessage()"
+            class="p-2 bd-highlight btn btn-link"
+          >
+            Delete
+          </button>
+          <button
+            [class.d-none]="selectedUsername == null || messages.length == 0"
+            type="button"
+            class="p-2 bd-highlight btn btn-link no-underline"
+            (click)="chooseMessages()"
+          >
+            Choose
+          </button>
+        </div>
+      </div>
+
+      <div
+        class="card-body m-2 border d-flex flex-row justify-content-start col-12 row border-0 shadow"
+        #scrollMe
+        [scrollTop]="scrollMe?.nativeElement?.scrollHeight"
+        (scroll)="onScroll($event)"
+        data-mdb-perfect-scrollbar="true"
+        style="
+          height: 400px;
+          position: relative;
+          overflow-y: auto;
+          border-radius: 12px;
+        "
+      >
+        <div class="message-box col-12">
+          <div class="d-flex justify-content-center">
+            <div
+              class="spinner-border text-primary p-1"
+              role="alert"
+              [class.d-none]="!showAlert"
+            >
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+
+          <div *ngFor="let message of filterMessagesByUser()">
+            <div class="d-flex align-items-start">
+              <div class="form-check" [class.d-none]="!isCheckBoxesActive">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  value=""
+                  id="selectMessage"
+                  [(ngModel)]="message.isChecked"
+                  (click)="selectMessage(message)"
+                />
+              </div>
+              <div
+                class="message"
+                style="white-space: pre-wrap"
+                [ngStyle]="getMessageStyle(message)"
+              >
+                <p>{{ message.text }}</p>
+                <p class="p-1 small text-muted">
+                  {{ message.when | date : "dd/MM hh:mm" }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="input-container d-flex"
+        (keydown.enter)="onEnterPress($event)"
+      >
+        <textarea
+          rows="1"
+          [(ngModel)]="newMessage"
+          (keydown.enter)="$event.preventDefault()"
+          placeholder="Mesajınızı girin..."
+          class="form-control flex-grow-1 m-2 border-0 shadow"
+          style="border-radius: 12px; min-height: 40px; height: 40px"
+        ></textarea>
+
+        <button
+          (click)="sendMessage()"
+          class="btn btn-primary m-2 border-0 shadow"
+          style="border-radius: 12px"
+          [disabled]="newMessage.trim() == '' || selectedUsername == null"
+        >
+          Send
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

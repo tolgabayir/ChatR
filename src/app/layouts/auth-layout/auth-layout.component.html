@@ -1,0 +1,51 @@
+<div class="main-content">
+  <nav class="navbar navbar-top navbar-horizontal navbar-expand-md navbar-dark">
+    <div class="container px-4">
+      <div
+        class="collapse navbar-collapse"
+        [ngbCollapse]="isCollapsed"
+        id="sidenav-collapse-main"
+      >
+        <!-- Navbar items -->
+        <ul style="width: 14%; align-self: center">
+          <h1
+            class="pt-2"
+            style="
+              font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS',
+                sans-serif;
+
+              color: rgb(255, 255, 255);
+              border-bottom: ridge;
+              border-bottom-width: 8px;
+            "
+          >
+            ChatR
+          </h1>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a
+              class="nav-link nav-link-icon"
+              routerLinkActive="active"
+              [routerLink]="['/register']"
+            >
+              <i class="ni ni-circle-08"></i>
+              <span class="nav-link-inner--text">Register</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link nav-link-icon"
+              routerLinkActive="active"
+              [routerLink]="['/login']"
+            >
+              <i class="ni ni-key-25"></i>
+              <span class="nav-link-inner--text">Login</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <router-outlet></router-outlet>
+</div>

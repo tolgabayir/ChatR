@@ -1,0 +1,116 @@
+<nav
+  class="navbar navbar-vertical navbar-expand-md navbar-light bg-white"
+  id="sidenav-main"
+>
+  <div class="container-fluid">
+    <!-- Toggler -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      (click)="isCollapsed = !isCollapsed"
+      aria-controls="sidenav-collapse-main"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <!-- Logo Brand -->
+    <a
+      class="navbar-brand pt-0"
+      style="width: 70%; align-self: center; max-width: 120px"
+      routerLinkActive="active"
+      [routerLink]="['/dashboard']"
+    >
+      <h1
+        style="
+          font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS',
+            sans-serif;
+          color: rgb(0, 98, 255);
+          border-bottom: ridge;
+          border-bottom-width: 8px;
+        "
+      >
+        ChatR
+      </h1>
+    </a>
+    <!-- Collapse -->
+    <div
+      class="collapse navbar-collapse"
+      [ngbCollapse]="isCollapsed"
+      id="sidenav-collapse-main"
+    >
+      <!-- Collapse header -->
+      <div class="navbar-collapse-header d-md-none">
+        <div class="row">
+          <div class="col-6 collapse-brand">
+            <a
+              class="navbar-brand pt-0"
+              style="width: 70%; align-self: center"
+              routerLinkActive="active"
+              [routerLink]="['/dashboard']"
+            >
+              <h1
+                style="
+                  font-family: 'Gill Sans', 'Gill Sans MT', Calibri,
+                    'Trebuchet MS', sans-serif;
+
+                  color: rgb(0, 98, 255);
+                  border-bottom: ridge;
+                  border-bottom-width: 8px;
+                "
+              >
+                ChatR
+              </h1>
+            </a>
+          </div>
+          <div class="col-6 collapse-close">
+            <button
+              type="button"
+              class="navbar-toggler"
+              (click)="isCollapsed = !isCollapsed"
+            >
+              <span></span>
+              <span></span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Navigation -->
+      <ul class="navbar-nav">
+        <li
+          *ngFor="let menuItem of menuItems"
+          class="{{ menuItem.class }} nav-item"
+        >
+          <a
+            routerLinkActive="active"
+            [routerLink]="[menuItem.path]"
+            class="nav-link"
+          >
+            <i class="ni {{ menuItem.icon }}"></i>
+            {{ menuItem.title }}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a (click)="toggleSettingsMenu()" class="nav-link">
+            <i class="ni fa fa-cog text-success"></i>
+            Settings
+          </a>
+        </li>
+        <ul class="nav-item" [ngClass]="{ active: isSettingsMenuOpen }">
+          <ul class="nav flex-column sub-menu" *ngIf="isSettingsMenuOpen">
+            <li class="custom-control custom-switch">
+              <input
+                id="allowNotifications"
+                type="checkbox"
+                class="custom-control-input"
+                [(ngModel)]="allowNotifications"
+              />
+
+              <label class="custom-control-label" for="allowNotifications">
+                <small>Allow Notifications</small>
+              </label>
+            </li>
+          </ul>
+        </ul>
+      </ul>
+    </div>
+  </div>
+</nav>
