@@ -13,8 +13,11 @@ export class ChatService {
   content = "MySuperSecureKey";
   MESSAGES: string = "messages";
   MESSAGE: string = "message";
+
   DELETE_MESSAGE_BY_ID: string = "deleteMessageById";
   DELETE_MESSAGES_BY_ID: string = "deleteMessagesById";
+  UPDATE_MESSAGE_BY_ID: string = "updateMessageById";
+  UPDATE_MESSAGES_BY_ID: string = "updateMessagesById";
 
 
   constructor(private http: HttpClient, private localService: LocalService) { }
@@ -59,6 +62,20 @@ export class ChatService {
 
     var headers = this.sendAuthorizedRequest();
     return this.http.post(this.API_URL + this.DELETE_MESSAGES_BY_ID, messageIds, { headers: headers });
+
+  }
+
+  updateMessage(message: Message): Observable<any> {
+
+    var headers = this.sendAuthorizedRequest();
+    return this.http.post(this.API_URL + this.UPDATE_MESSAGE_BY_ID, message, { headers: headers });
+
+  }
+
+  updateMessages(messageIds: string[]): Observable<any> {
+
+    var headers = this.sendAuthorizedRequest();
+    return this.http.post(this.API_URL + this.UPDATE_MESSAGES_BY_ID, messageIds, { headers: headers });
 
   }
 

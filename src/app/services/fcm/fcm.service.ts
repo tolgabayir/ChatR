@@ -8,6 +8,7 @@ import { environment } from 'src/environments/environment';
 export class FcmService {
   API_URL: string = environment.API_ENDPOINT + "Fcm/";
   SEND_NOTIFICATION: string = "sendNotification";
+  isNotificationAllowed: boolean = false;
 
   headers = new HttpHeaders({
     "Access-Control-Allow-Origin": "*",

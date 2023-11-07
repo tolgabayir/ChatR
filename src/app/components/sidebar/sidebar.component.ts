@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { FcmService } from 'src/app/services/fcm/fcm.service';
 
 declare interface RouteInfo {
   path: string;
@@ -23,9 +24,9 @@ export class SidebarComponent implements OnInit {
   public menuItems: any[];
   public isCollapsed = true;
   public isSettingsMenuOpen = false;
-  public allowNotifications = false;
+  public isNotificationsAllowed = false;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private fcmService: FcmService) { }
 
   ngOnInit() {
     this.menuItems = ROUTES.filter(menuItem => menuItem);
@@ -36,5 +37,9 @@ export class SidebarComponent implements OnInit {
 
   toggleSettingsMenu() {
     this.isSettingsMenuOpen = !this.isSettingsMenuOpen;
+  }
+
+  allowNotifications() {
+    this.fcmService.isNotificationAllowed = this.isNotificationsAllowed;
   }
 }

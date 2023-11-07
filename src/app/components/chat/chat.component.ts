@@ -81,16 +81,13 @@ export class ChatComponent implements OnInit {
 
           this.fcmService.sendPushNotification(token, message.sender.userName, message.text).subscribe({
             next: (response) => {
-              console.log("Push bildirimi gönderildi:", response);
+              console.log("Push notification sent.");
             },
             error: (error) => {
-              console.error("Push bildirimi gönderme hatası:", error);
+              console.error("Push notification could not be sent", error);
             },
           });
-
-
         }
-
       }
     });
   }
@@ -139,9 +136,7 @@ export class ChatComponent implements OnInit {
   async onScroll(event: Event) {
     const element = event.target as HTMLElement;
     const scrollPosition = element.scrollTop;
-
     if (scrollPosition === 0) {
-
       //Fetching new messages
       this.showAlert = true;
       await delay(1000);
@@ -172,7 +167,6 @@ export class ChatComponent implements OnInit {
 
       },
       error: (error) => {
-
       },
     })
   }
@@ -207,7 +201,6 @@ export class ChatComponent implements OnInit {
     if (activeUserNotif) {
       activeUserNotif.unReadedMessage = 0;
     }
-
   }
 
 
@@ -218,7 +211,6 @@ export class ChatComponent implements OnInit {
       && m.receiver.userName == this.selectedUsername || m.sender.userName == this.selectedUsername
       && m.receiver.userName == this.currentUsername);
     return this.filteredMessages;
-
   }
 
 
@@ -236,7 +228,6 @@ export class ChatComponent implements OnInit {
     this.saveMessage(this.message);
 
     this.newMessage = "";
-
   }
 
 
@@ -302,45 +293,45 @@ export class ChatComponent implements OnInit {
 
     if (messages && messages.length === 1) {
       const mesId = messageIds[0];
-      const mes = messages[0];
       const index = this.messages.findIndex(message => message.id === mesId);
       if (index !== -1) {
         this.messages.splice(index, 1); //Remove message from list.
       }
-      if (mes.isDeleted == true) {
-        this.chatService.deleteMessage(mesId).subscribe(
+
+      this.chatService.deleteMessage(mesId).subscribe(
+        {
+          next: (response) => { },
+          error: (err) => {
+            console.log("Error: " + err);
+          },
+        }
+      );
+
+
+    }
+    else {
+      const deletedMessages = [];
+      for (const message of messages) {
+        const index = this.messages.findIndex(mes => mes.id === message.id);
+        if (index !== -1) {
+          this.messages.splice(index, 1); //Remove message from list.
+        }
+        deletedMessages.push(message);
+
+      }
+      if (deletedMessages.length != 0) {
+        this.chatService.deleteMessages(messageIds).subscribe(
           {
-            next: (response) => { },
+            next: (response) => {
+
+
+            },
             error: (err) => {
               console.log("Error: " + err);
             },
           }
         );
       }
-    }
-    else {
-      var deletedMessages = [];
-      for (const message of messages) {
-        const index = this.messages.findIndex(mes => mes.id === message.id);
-        if (index !== -1) {
-          this.messages.splice(index, 1); //Remove message from list.
-        }
-
-        if (message.isDeleted == true) {
-          deletedMessages.push(message);
-        }
-      }
-      this.chatService.deleteMessages(deletedMessages).subscribe(
-        {
-          next: (response) => {
-
-
-          },
-          error: (err) => {
-            console.log("Error: " + err);
-          },
-        }
-      );
     }
 
   }

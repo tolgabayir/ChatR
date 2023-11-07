@@ -88,8 +88,12 @@
             {{ menuItem.title }}
           </a>
         </li>
-        <li class="nav-item">
-          <a (click)="toggleSettingsMenu()" class="nav-link">
+        <li class="nav-item" [class.active]="isSettingsMenuOpen">
+          <a
+            (click)="toggleSettingsMenu()"
+            class="nav-link"
+            style="user-select: none"
+          >
             <i class="ni fa fa-cog text-success"></i>
             Settings
           </a>
@@ -101,7 +105,7 @@
                 id="allowNotifications"
                 type="checkbox"
                 class="custom-control-input"
-                [(ngModel)]="allowNotifications"
+                [(ngModel)]="isNotificationsAllowed"
               />
 
               <label class="custom-control-label" for="allowNotifications">

@@ -4,6 +4,8 @@
 
 export const environment = {
   API_ENDPOINT: "https://localhost:7269/",
+  MESSAGES: "messages",
+  MESSAGE: "message",
   production: false,
   firebase: {
     apiKey: "AIzaSyA3LxQIHHH3k-Lo6VHaOHaIiC413LATcNA",
