@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, ElementRef, EventEmitter, HostListener, OnInit, ViewChild } from '@angular/core';
 import { delay } from 'q';
+import { MessageIdDto } from 'src/app/models/Dto/MessageIdDto';
 import { UserDto } from 'src/app/models/Dto/UserDto';
 import { Message } from 'src/app/models/Message';
 import { MessageNotification } from 'src/app/models/MessageNotification';
@@ -39,6 +40,7 @@ export class ChatComponent implements OnInit {
   messageNotifications: MessageNotification[] = [];
   isCheckBoxesActive: boolean = false;
   isAllMessagesSelected: boolean = false;
+  messageIdDto: MessageIdDto = new MessageIdDto();
 
 
 
@@ -151,16 +153,18 @@ export class ChatComponent implements OnInit {
       next: (response): Message[] | any => {
 
         for (let index = 0; index < response.length; index++) {
-          this.message = new Message();
-          this.message.id = response[index].id;
-          this.message.sender = this.users.find(u => u.id == response[index].senderId);
-          this.message.receiver = this.users.find(u => u.id == response[index].receiverId);
-          this.message.text = response[index].text;
-          this.message.when = response[index].when;
-          this.message.receiptInfo = response[index].receiptInfo;
-          this.message.isDeleted = response[index].isDeleted;
+          if (response[index].userIdWhoDelete != this.currentUser.id) {
 
-          this.messages.unshift(this.message);
+            this.message = new Message();
+            this.message.id = response[index].id;
+            this.message.sender = this.users.find(u => u.id == response[index].senderId);
+            this.message.receiver = this.users.find(u => u.id == response[index].receiverId);
+            this.message.text = response[index].text;
+            this.message.when = response[index].when;
+            this.message.receiptInfo = response[index].receiptInfo;
+            this.message.isDeleted = response[index].isDeleted;
+            this.messages.unshift(this.message);
+          }
         }
         //For Pagination
         this.loadCount++;
@@ -290,15 +294,19 @@ export class ChatComponent implements OnInit {
 
     var messages = this.messages.filter(c => c.isChecked === true);
     var messageIds = messages.map(m => m.id);
-
+    var userIdsWhoDelete = messages.map(m => m.userIdWhoDelete);
     if (messages && messages.length === 1) {
       const mesId = messageIds[0];
+      var userIdWhoDelete = userIdsWhoDelete[0];
+      if (userIdWhoDelete === undefined) {
+        userIdWhoDelete = this.currentUser.id;
+      }
       const index = this.messages.findIndex(message => message.id === mesId);
       if (index !== -1) {
         this.messages.splice(index, 1); //Remove message from list.
       }
 
-      this.chatService.deleteMessage(mesId).subscribe(
+      this.chatService.deleteMessage(mesId, userIdWhoDelete).subscribe(
         {
           next: (response) => { },
           error: (err) => {
@@ -311,7 +319,12 @@ export class ChatComponent implements OnInit {
     }
     else {
       const deletedMessages = [];
+      var messageIdDtos: MessageIdDto[] = [];
       for (const message of messages) {
+        this.messageIdDto = new MessageIdDto();
+        this.messageIdDto.messageId = message.id;
+        this.messageIdDto.userIdWhoDelete = message.userIdWhoDelete ?? this.currentUser.id;
+        messageIdDtos.push(this.messageIdDto);
         const index = this.messages.findIndex(mes => mes.id === message.id);
         if (index !== -1) {
           this.messages.splice(index, 1); //Remove message from list.
@@ -320,7 +333,7 @@ export class ChatComponent implements OnInit {
 
       }
       if (deletedMessages.length != 0) {
-        this.chatService.deleteMessages(messageIds).subscribe(
+        this.chatService.deleteMessages(messageIdDtos).subscribe(
           {
             next: (response) => {
 

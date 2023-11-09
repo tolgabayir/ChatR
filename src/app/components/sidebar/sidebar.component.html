@@ -98,22 +98,61 @@
             Settings
           </a>
         </li>
-        <ul class="nav-item" [ngClass]="{ active: isSettingsMenuOpen }">
-          <ul class="nav flex-column sub-menu" *ngIf="isSettingsMenuOpen">
-            <li class="custom-control custom-switch">
-              <input
-                id="allowNotifications"
-                type="checkbox"
-                class="custom-control-input"
-                [(ngModel)]="isNotificationsAllowed"
-              />
+        <div class="p-1">
+          <ul class="nav-item" [ngClass]="{ active: isSettingsMenuOpen }">
+            <ul class="nav flex-column sub-menu" *ngIf="isSettingsMenuOpen">
+              <li class="custom-control custom-switch">
+                <input
+                  id="allowNotifications"
+                  type="checkbox"
+                  class="custom-control-input"
+                  (change)="allowNotifications()"
+                  [(ngModel)]="isNotificationsAllowed"
+                />
 
-              <label class="custom-control-label" for="allowNotifications">
-                <small>Allow Notifications</small>
-              </label>
-            </li>
+                <label class="custom-control-label" for="allowNotifications">
+                  <small>Allow Notifications</small>
+                </label>
+              </li>
+            </ul>
           </ul>
-        </ul>
+
+          <ul class="nav-item" [ngClass]="{ active: isSettingsMenuOpen }">
+            <ul class="nav flex-column sub-menu" *ngIf="isSettingsMenuOpen">
+              <li class="custom-control custom-switch">
+                <input
+                  id="allowNotifications"
+                  type="checkbox"
+                  class="custom-control-input"
+                  (change)="allowNotifications()"
+                  [(ngModel)]="isNotificationsAllowed"
+                />
+
+                <label class="custom-control-label" for="allowNotifications">
+                  <small>Hide Profile Picture</small>
+                </label>
+              </li>
+            </ul>
+          </ul>
+
+          <ul class="nav-item" [ngClass]="{ active: isSettingsMenuOpen }">
+            <ul class="nav flex-column sub-menu" *ngIf="isSettingsMenuOpen">
+              <li class="custom-control custom-switch">
+                <input
+                  id="allowNotifications"
+                  type="checkbox"
+                  class="custom-control-input"
+                  (change)="allowNotifications()"
+                  [(ngModel)]="isNotificationsAllowed"
+                />
+
+                <label class="custom-control-label" for="allowNotifications">
+                  <small>Hide Notification Content</small>
+                </label>
+              </li>
+            </ul>
+          </ul>
+        </div>
       </ul>
     </div>
   </div>

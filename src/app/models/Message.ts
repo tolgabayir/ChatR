@@ -9,4 +9,5 @@ export class Message {
     receiptInfo: boolean;
     isChecked: boolean;
     isDeleted: boolean;
+    userIdWhoDelete?: string;
 }

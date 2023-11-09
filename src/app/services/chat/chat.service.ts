@@ -4,6 +4,7 @@ import { Observable, catchError, retry, tap } from 'rxjs';
 import { Message } from 'src/app/models/Message';
 import { environment } from 'src/environments/environment';
 import { LocalService } from '../local/local.service';
+import { MessageIdDto } from 'src/app/models/Dto/MessageIdDto';
 
 @Injectable({
   providedIn: 'root'
@@ -51,17 +52,17 @@ export class ChatService {
 
   }
 
-  deleteMessage(messageId: string): Observable<any> {
-    const body = { messageId: messageId };
+  deleteMessage(messageId: string, userIdWhoDelete: string): Observable<any> {
+    const body = { messageId: messageId, userIdWhoDelete: userIdWhoDelete };
     var headers = this.sendAuthorizedRequest();
     return this.http.post(this.API_URL + this.DELETE_MESSAGE_BY_ID, body, { headers: headers });
 
   }
 
-  deleteMessages(messageIds: string[]): Observable<any> {
+  deleteMessages(messageIdDtos: MessageIdDto[]): Observable<any> {
 
     var headers = this.sendAuthorizedRequest();
-    return this.http.post(this.API_URL + this.DELETE_MESSAGES_BY_ID, messageIds, { headers: headers });
+    return this.http.post(this.API_URL + this.DELETE_MESSAGES_BY_ID, messageIdDtos, { headers: headers });
 
   }
 
