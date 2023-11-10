@@ -14,6 +14,7 @@ export class ChatService {
   content = "MySuperSecureKey";
   MESSAGES: string = "messages";
   MESSAGE: string = "message";
+  isProfilePictureHidden: boolean = false;
 
   DELETE_MESSAGE_BY_ID: string = "deleteMessageById";
   DELETE_MESSAGES_BY_ID: string = "deleteMessagesById";

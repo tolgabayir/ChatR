@@ -41,6 +41,7 @@ export class ChatComponent implements OnInit {
   isCheckBoxesActive: boolean = false;
   isAllMessagesSelected: boolean = false;
   messageIdDto: MessageIdDto = new MessageIdDto();
+  isProfilePictureHidden: boolean;
 
 
 
@@ -49,7 +50,8 @@ export class ChatComponent implements OnInit {
     private chatService: ChatService,
     private datePipe: DatePipe,
     private localService: LocalService,
-    private fcmService: FcmService) {
+    private fcmService: FcmService
+  ) {
     this.registerEvents();
     this.subscribeToEvents();
     this.currentUsername = authService.getCurrentUsername();
@@ -61,7 +63,69 @@ export class ChatComponent implements OnInit {
 
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+
+  }
+
+  getUsers() {
+    this.authService.getUsers().subscribe({
+      next: (response): UserDto | any => {
+        this.users = response;
+        this.currentUser = this.users.find(u => u.userName == this.currentUsername);
+      },
+      error: (error) => {
+      },
+    })
+  }
+  hideProfilePicture() {
+    return this.isProfilePictureHidden = this.chatService.isProfilePictureHidden;
+  }
+
+  getMessagesByUsername() {
+    this.chatService.getMessages(this.currentUsername, this.loadCount, this.loadSize).subscribe({
+      next: (response): Message[] | any => {
+
+        for (let index = 0; index < response.length; index++) {
+          if (response[index].userIdWhoDelete != this.currentUser.id) {
+
+            this.message = new Message();
+            this.message.id = response[index].id;
+            this.message.sender = this.users.find(u => u.id == response[index].senderId);
+            this.message.receiver = this.users.find(u => u.id == response[index].receiverId);
+            this.message.text = response[index].text;
+            this.message.when = response[index].when;
+            this.message.receiptInfo = response[index].receiptInfo;
+            this.message.isDeleted = response[index].isDeleted;
+            this.messages.unshift(this.message);
+          }
+        }
+        //For Pagination
+        this.loadCount++;
+
+      },
+      error: (error) => {
+      },
+    })
+  }
+
+  isUserActive(index: number) {
+    if (index == this.selectedIndex) {
+      return true;
+    }
+  }
+
+
+  selectUser(userIndex: number, userName: string) {
+    this.selectedIndex = userIndex;
+    this.selectedUsername = userName;
+    var selectedUser = this.users.find(u => u.userName == this.selectedUsername);
+    var activeUserNotif = this.messageNotifications.find(notif => notif.senderId == selectedUser.id);
+
+    if (activeUserNotif) {
+      activeUserNotif.unReadedMessage = 0;
+    }
+  }
+
 
   //Listen received messages
   registerEvents(): void {
@@ -78,18 +142,30 @@ export class ChatComponent implements OnInit {
         this.message.receiptInfo = message.receiptInfo;
         this.message.isDeleted = message.isDeleted;
         this.messageReceived.emit(this.message);
-        const token = this.localService.getData("deviceToken");
-        if (token) {
 
-          this.fcmService.sendPushNotification(token, message.sender.userName, message.text).subscribe({
-            next: (response) => {
-              console.log("Push notification sent.");
-            },
-            error: (error) => {
-              console.error("Push notification could not be sent", error);
-            },
-          });
+        var token = this.localService.getData("deviceToken");
+
+        if (token) {
+          if (this.fcmService.isNotificationAllowed) {
+            var title = message.sender.userName;
+            var body = message.text;
+            if (this.fcmService.isNotificationContentHide) {
+              title = "ChatR";
+              body = "Bildirim!";
+            }
+
+            this.fcmService.sendPushNotification(token, title, body).subscribe({
+              next: (response) => {
+                console.log("Push notification sent.");
+              },
+              error: (error) => {
+                console.error("Push notification could not be sent", error);
+              },
+            });
+          }
         }
+
+
       }
     });
   }
@@ -141,71 +217,13 @@ export class ChatComponent implements OnInit {
     if (scrollPosition === 0) {
       //Fetching new messages
       this.showAlert = true;
-      await delay(1000);
+      await delay(600);
       this.getMessagesByUsername();
       this.showAlert = false;
     }
   }
 
 
-  getMessagesByUsername() {
-    this.chatService.getMessages(this.currentUsername, this.loadCount, this.loadSize).subscribe({
-      next: (response): Message[] | any => {
-
-        for (let index = 0; index < response.length; index++) {
-          if (response[index].userIdWhoDelete != this.currentUser.id) {
-
-            this.message = new Message();
-            this.message.id = response[index].id;
-            this.message.sender = this.users.find(u => u.id == response[index].senderId);
-            this.message.receiver = this.users.find(u => u.id == response[index].receiverId);
-            this.message.text = response[index].text;
-            this.message.when = response[index].when;
-            this.message.receiptInfo = response[index].receiptInfo;
-            this.message.isDeleted = response[index].isDeleted;
-            this.messages.unshift(this.message);
-          }
-        }
-        //For Pagination
-        this.loadCount++;
-
-      },
-      error: (error) => {
-      },
-    })
-  }
-
-
-  getUsers() {
-    this.authService.getUsers().subscribe({
-      next: (response): UserDto | any => {
-        this.users = response;
-        this.currentUser = this.users.find(u => u.userName == this.currentUsername);
-      },
-      error: (error) => {
-      },
-    })
-  }
-
-
-  isUserActive(index: number) {
-    if (index == this.selectedIndex) {
-      return true;
-    }
-  }
-
-
-
-  selectUser(userIndex: number, userName: string) {
-    this.selectedIndex = userIndex;
-    this.selectedUsername = userName;
-    var selectedUser = this.users.find(u => u.userName == this.selectedUsername);
-    var activeUserNotif = this.messageNotifications.find(notif => notif.senderId == selectedUser.id);
-
-    if (activeUserNotif) {
-      activeUserNotif.unReadedMessage = 0;
-    }
-  }
 
 
 

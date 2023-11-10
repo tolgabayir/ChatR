@@ -103,15 +103,15 @@
             <ul class="nav flex-column sub-menu" *ngIf="isSettingsMenuOpen">
               <li class="custom-control custom-switch">
                 <input
-                  id="allowNotifications"
+                  id="hideProfilePicture"
                   type="checkbox"
                   class="custom-control-input"
-                  (change)="allowNotifications()"
-                  [(ngModel)]="isNotificationsAllowed"
+                  (change)="hideProfilePicture()"
+                  [(ngModel)]="isProfilePictureHide"
                 />
 
-                <label class="custom-control-label" for="allowNotifications">
-                  <small>Allow Notifications</small>
+                <label class="custom-control-label" for="hideProfilePicture">
+                  <small style="user-select: none">Hide Profile Picture</small>
                 </label>
               </li>
             </ul>
@@ -129,7 +129,7 @@
                 />
 
                 <label class="custom-control-label" for="allowNotifications">
-                  <small>Hide Profile Picture</small>
+                  <small style="user-select: none">Allow Notifications</small>
                 </label>
               </li>
             </ul>
@@ -139,15 +139,21 @@
             <ul class="nav flex-column sub-menu" *ngIf="isSettingsMenuOpen">
               <li class="custom-control custom-switch">
                 <input
-                  id="allowNotifications"
+                  [disabled]="!isNotificationsAllowed"
+                  id="hideNotificationContent"
                   type="checkbox"
                   class="custom-control-input"
-                  (change)="allowNotifications()"
-                  [(ngModel)]="isNotificationsAllowed"
+                  (change)="hideNotificationContent()"
+                  [(ngModel)]="isNotificationContentHide"
                 />
 
-                <label class="custom-control-label" for="allowNotifications">
-                  <small>Hide Notification Content</small>
+                <label
+                  class="custom-control-label"
+                  for="hideNotificationContent"
+                >
+                  <small style="user-select: none"
+                    >Hide Notification Content</small
+                  >
                 </label>
               </li>
             </ul>

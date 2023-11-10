@@ -30,14 +30,25 @@
           style="height: 82px; max-height: 82px; min-height: 82px"
           [class.active]="isUserActive(i)"
         >
-          <img
-            src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-{{
-              i + 6
-            }}.webp"
-            alt="avatar"
-            class="rounded-circle p-1 align-self-center"
-            width="60"
-          />
+          <div>
+            <img
+              *ngIf="!hideProfilePicture()"
+              src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-{{
+                i + 6
+              }}.webp"
+              alt="avatar"
+              class="rounded-circle p-1 align-self-center"
+              width="60"
+            />
+            <img
+              *ngIf="hideProfilePicture()"
+              src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"
+              alt="avatar"
+              class="rounded-circle p-1 align-self-center"
+              width="60"
+            />
+          </div>
+
           <div class="p-2">
             <p class="fw-bold mb-0">{{ user.userName }}</p>
             <p

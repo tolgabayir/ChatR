@@ -10,7 +10,6 @@ import { LocalService } from 'src/app/services/local/local.service';
 export class DashboardComponent implements OnInit {
   message: any = null;
   constructor(
-    private localService: LocalService
   ) { }
 
   ngOnInit() {
